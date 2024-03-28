@@ -7,7 +7,7 @@ public class Main {
 
 
     }
-
+    //Procedure 1: Manual Sort
     public static int[] MANUAL_SORT(int[] arr, int low, int high) {
 
         int N = high-low + 1;
