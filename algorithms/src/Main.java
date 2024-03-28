@@ -41,4 +41,8 @@ public class Main {
         }
         return arr;
     }
+    //piviotSelction
+    //manuleSort
+    //minElement
+    //maxElement
 }
