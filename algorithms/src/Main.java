@@ -53,7 +53,7 @@ public class Main {
         return arr;
     }
     //TO DO
-    private static int PARTIOION(int[] arr, int low, int high, int a) {
+    private static int PARTITION(int[] arr, int low, int high, int a) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'PARTITION'");
     }
