@@ -2,8 +2,22 @@
 
 public class Main {
     public static void main(String[] args) {
+        int[] arr = {7, 2, 1, 6, 8, 5, 3, 4};
 
+        System.out.println("Original array:");
+        printArray(arr);
 
+        QUICK_SORT(arr, 0, arr.length - 1);
+
+        System.out.println("Sorted array:");
+        printArray(arr);
+
+    }
+    public static void printArray(int[] arr) {
+        for (int num : arr) {
+            System.out.print(num + " ");
+        }
+        System.out.println();
     }
     //Algorithm 1: Quick Sort
     public static void QUICK_SORT(int[] arr, int low,int high){
@@ -12,8 +26,8 @@ public class Main {
             MANUAL_SORT(arr, low, high);
         }
         else{ 
-            int a=calculate_piviot(arr,low,high);
-            int q=PARTIOION(arr, low,high,a);
+            double pivot=calculate_pivot(arr,low,high);
+            int q=PARTITION(arr, low,high,pivot);
             QUICK_SORT(arr, low, q);
             QUICK_SORT(arr, q+1, high);
         }
@@ -53,33 +67,51 @@ public class Main {
         return arr;
     }
     //TO DO
-    private static int PARTITION(int[] arr, int low, int high, int a) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'PARTITION'");
+    private static int PARTITION(int[] arr, int low, int high, double pivot) {
+        int i = low - 1;
+        int j = high + 1;
+
+        do {
+            while (arr[i] < pivot)
+                i++;
+            while (arr[j] > pivot)
+                j--;
+
+            if (i >= j)
+                break;
+
+        } while (true);
+
+        int temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+
+        return j;
     }
-    private static int calculate_piviot(int[] arr, int low, int high) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'calculate_piviot'");
+    private static double calculate_pivot(int[] arr, int low, int high) {
+
+        int middle = (high + low)/2;
+        return ( min(arr,low,middle) + max(arr,low,middle) + min(arr,middle ,high) + max(arr,low,high))/4;
     }
 
 
     //supporting methods
-    public static int low(int[] arr){
+    public static double min(int[] arr, int low, int high){
         int min=arr[0];
-        for(int i=0;i<=arr.length-1;i++){
+        for(int i=low;i<=high;i++){
             if (arr[i]<min) {
                 min=arr[i];
             }
         }
         return min;
     }
-    public static int high(int[] arr){
-        int high=arr[0];
-        for(int i=0;i<=arr.length-1;i++){
-            if (arr[i]>high) {
-                high=arr[i];
+    public static double max(int[] arr, int low, int high){
+        int max=arr[0];
+        for(int i=low;i<=high;i++){
+            if (arr[i]>max) {
+                max=arr[i];
             }
         }
-        return high;
+        return max;
     }
 }
