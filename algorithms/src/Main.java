@@ -2,8 +2,11 @@
 
 public class Main {
     public static void main(String[] args) {
-        int[] arr = {7, 2, 1, 6, 8, 5, 3, 4};
-
+        int[] arr = new int[1000000] ;
+        Random rn=new Random();
+        for(int i=0;i<1000000;i++){
+            arr[i]=rn.nextInt(99901)+100;
+        }
         System.out.println("Original array:");
         printArray(arr);
 
@@ -21,17 +24,15 @@ public class Main {
     }
     //Algorithm 1: Quick Sort
     public static void QUICK_SORT(int[] arr, int low,int high){
-        int N=high-low+1;
-        if (N<=3) {
+        int N = high - low + 1;
+        if (N >= 3) {
+            double pivot = calculate_pivot(arr, low, high);
+            int q = PARTITION(arr, low, high, pivot);
+            QUICK_SORT(arr, low, q);
+            QUICK_SORT(arr, q + 1, high);
+        } else {
             MANUAL_SORT(arr, low, high);
         }
-        else{ 
-            double pivot=calculate_pivot(arr,low,high);
-            int q=PARTITION(arr, low,high,pivot);
-            QUICK_SORT(arr, low, q);
-            QUICK_SORT(arr, q+1, high);
-        }
-        
     }
     //Procedure 1: Manual Sort
     public static int[] MANUAL_SORT(int[] arr, int low, int high) {
@@ -68,30 +69,32 @@ public class Main {
     }
     //TO DO
     private static int PARTITION(int[] arr, int low, int high, double pivot) {
-        int i = low - 1;
-        int j = high + 1;
+        int i = low;
+        int j = high;
 
-        do {
+        while (true) {
             while (arr[i] < pivot)
                 i++;
             while (arr[j] > pivot)
                 j--;
 
             if (i >= j)
-                break;
+                return j;
 
-        } while (true);
-
-        int temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-
-        return j;
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+            i++;
+            j--;
+        }
     }
     private static double calculate_pivot(int[] arr, int low, int high) {
 
-        int middle = (high + low)/2;
-        return ( min(arr,low,middle) + max(arr,low,middle) + min(arr,middle ,high) + max(arr,low,high))/4;
+      double sum = 0;
+        for (int i = low; i <= high; i++) {
+            sum += arr[i];
+        }
+        return sum / (high - low + 1);
     }
 
 
