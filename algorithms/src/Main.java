@@ -2,6 +2,11 @@ import java.util.Random;
 
 public class Main {
     public static void main(String[] args) {
+
+        int[] arr = new int[]{88, 77, 66, 55, 44, 33, 22, 11};
+        QUICK_SORT(arr, 0, arr.length -1);
+        printArray(arr);
+
         testAlgorithmPerformance(10000);
         testAlgorithmPerformance(15000);
         testAlgorithmPerformance(20000);
@@ -17,7 +22,7 @@ public class Main {
 
         int[] bestCaseArray = new int[(int) size];
         for (int i = 0; i < size; i++) {
-            bestCaseArray[i] = i;
+            bestCaseArray[i] = 5;
         }
 
         long bestCaseRuntimeSumProposed = 0;
@@ -106,8 +111,6 @@ public class Main {
         System.out.println("Runtime of classical algorithm: " + (worstCaseRuntimeSumClassical / 5) + " nanoseconds");
 
         System.out.println("--------------------------------------------");
-        System.out.println();
-        System.out.println();
     }
 
 
@@ -134,6 +137,7 @@ public class Main {
             MANUAL_SORT(arr, low, high);
         } else {
             double pivot = calculate_pivot(arr, low, high);
+            System.out.println("pivot is " + pivot);
             int q = PARTITION(arr, low, high, pivot);
             QUICK_SORT(arr, low, q);
             QUICK_SORT(arr, q + 1, high);
@@ -191,22 +195,35 @@ public class Main {
             arr[j] = temp;
             i++;
             j--;
+
+            // Check if i and j cross each other
+            if (i > j)
+                return j;
         }
     }
+
 
     private static double calculate_pivot(int[] arr, int low, int high) {
+        // Find the minimum and maximum values in the first half of the array
+        double min1 = min(arr, low, high);
+        double max1 = max(arr, low, high);
+        double mean1 = (min1 + max1) / ((high / 2) - low + 1);
 
-        double sum = 0;
-        for (int i = low; i <= high; i++) {
-            sum += arr[i];
-        }
-        return sum / (high - low + 1);
+        /*// Find the minimum and maximum values in the second half of the array
+        double min2 = min(arr, high / 2 + 1, high);
+        double max2 = max(arr, high / 2 + 1, high);
+        double mean2 = (min2 + max2) / (high - (high / 2 + 1) + 1);
+        System.out.println(mean2 + " min is " + min2 + " max is " + max2 + " low is " + (high / 2 + 1) + " high is  " + high);*/
+
+        // Calculate the pivot as the average of the maximum and minimum values from each half
+        return mean1;
     }
+
 
 
     //supporting methods
     public static double min(int[] arr, int low, int high) {
-        int min = arr[0];
+        int min = arr[low];
         for (int i = low; i <= high; i++) {
             if (arr[i] < min) {
                 min = arr[i];
@@ -216,7 +233,7 @@ public class Main {
     }
 
     public static double max(int[] arr, int low, int high) {
-        int max = arr[0];
+        int max = arr[low];
         for (int i = low; i <= high; i++) {
             if (arr[i] > max) {
                 max = arr[i];
