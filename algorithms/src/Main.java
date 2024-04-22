@@ -2,15 +2,19 @@ import java.sql.SQLOutput;
 import java.util.Random;
 
 public class Main {
+    static int noOfChecks = 0;
+    static int noOfSwaps = 0;
+    static int noOfChecks1 = 0;
+    static int noOfSwaps1 = 0;
     public static void main(String[] args) {
 
         int[] arr = new int[]{88, 77, 66, 55, 44, 33, 22, 11};
         QUICK_SORT(arr, 0, arr.length -1);
         printArray(arr);
 
-        testAlgorithmPerformance(1000);
-        testAlgorithmPerformance(5000);
-        testAlgorithmPerformance(15000);
+        testAlgorithmPerformance(10000);
+        //testAlgorithmPerformance(5000);
+        //testAlgorithmPerformance(15000);
     }
 
 
@@ -23,8 +27,10 @@ public class Main {
 
         int[] bestCaseArray = new int[(int) size];
         for (int i = 0; i < size; i++) {
-            bestCaseArray[i] = 5;
+            bestCaseArray[i] = 11 + (i * 11);
+
         }
+       // printArray(bestCaseArray);
 
         long bestCaseRuntimeSumProposed = 0;
         long bestCaseRuntimeSumClassical = 0;
@@ -45,8 +51,12 @@ public class Main {
             bestCaseRuntimeSumClassical += (endTime2 - startTime2);
         }
 
-        System.out.println("Runtime of proposed algorithm: " + (bestCaseRuntimeSumProposed / 5) + " nanoseconds");
-        System.out.println("Runtime of classical algorithm: " + (bestCaseRuntimeSumClassical / 5) + " nanoseconds");
+        System.out.println("Runtime of proposed algorithm: " + (bestCaseRuntimeSumProposed / 5) + " nanoseconds in " + noOfChecks/5 + " checks in " + noOfSwaps/5 + " swaps");
+        System.out.println("Runtime of classical algorithm: " + (bestCaseRuntimeSumClassical / 5) + " nanoseconds in " + noOfChecks1/5 + " checks in " + noOfSwaps1/5 + " swaps");
+        noOfChecks = 0;
+        noOfSwaps = 0;
+        noOfSwaps1 = 0;
+        noOfChecks1 = 0;
 
         System.out.println("--------------------------------------------");
 
@@ -57,15 +67,14 @@ public class Main {
         long averageCaseRuntimeSumClassical = 0;
 
 
-        for (int j = 0; j < 5; j++) {
+        for (int j = 0; j < 100; j++) {
             int[] averageCaseArray = new int[(int) size];
-            for (int i = 0; i < Math.ceil(size / 2); i++) {
-                averageCaseArray[i] = 2 * i + 1;
-                averageCaseArray[i + (int) size / 2] = 2 * i + 2;
+            for (int i = 0; i < size; i++) {
+                averageCaseArray[i] = 11 + (i * 11);
             }
             int[] averageCaseArrayCopy = averageCaseArray.clone();
             //printArray(averageCaseArrayCopy);
-
+            shuffleArray(averageCaseArrayCopy);
             // Measure runtime for the proposed algorithm
             long startTime3 = System.nanoTime();
             QUICK_SORT(averageCaseArrayCopy, 0, averageCaseArrayCopy.length - 1);
@@ -79,8 +88,12 @@ public class Main {
             averageCaseRuntimeSumClassical += (endTime4 - startTime4);
         }
 
-        System.out.println("Runtime of proposed algorithm: " + (averageCaseRuntimeSumProposed / 5) + " nanoseconds");
-        System.out.println("Runtime of classical algorithm: " + (averageCaseRuntimeSumClassical / 5) + " nanoseconds");
+        System.out.println("Runtime of proposed algorithm: " + (averageCaseRuntimeSumProposed / 100) + " nanoseconds in " + noOfChecks/100 + " checks in " + noOfSwaps/100 + " swaps");
+        noOfChecks = 0;
+        noOfSwaps = 0;
+        System.out.println("Runtime of classical algorithm: " + (averageCaseRuntimeSumClassical / 100) + " nanoseconds in " + noOfChecks1/100 + " checks in " + noOfSwaps1/100 + " swaps");
+        noOfChecks1 = 0;
+        noOfSwaps1 = 0;
 
         System.out.println("--------------------------------------------");
 
@@ -93,7 +106,8 @@ public class Main {
         for (int k = 0; k < 5; k++) {
             int[] worstCaseArray = new int[(int) size];
             for (int i = 0; i < size; i++) {
-                worstCaseArray[i] = (int) size - i;
+                if(i%2 == 0)
+                worstCaseArray[i] = 88 - (i*i);
             }
             int[] worstCaseArrayCopy = worstCaseArray.clone();
 
@@ -110,8 +124,8 @@ public class Main {
             worstCaseRuntimeSumClassical += (endTime6 - startTime6);
         }
 
-        System.out.println("Runtime of proposed algorithm: " + (worstCaseRuntimeSumProposed / 5) + " nanoseconds");
-        System.out.println("Runtime of classical algorithm: " + (worstCaseRuntimeSumClassical / 5) + " nanoseconds");
+        System.out.println("Runtime of proposed algorithm: " + (worstCaseRuntimeSumProposed / 5) + " nanoseconds in " + noOfChecks/5 + " checks in " + noOfSwaps/5 + " swaps");
+        System.out.println("Runtime of classical algorithm: " + (worstCaseRuntimeSumClassical / 5) + " nanoseconds in " + noOfChecks1/5 + " checks in " + noOfSwaps1/5 + " swaps");
 
         System.out.println("--------------------------------------------");
     }
@@ -149,6 +163,7 @@ public class Main {
         } else {
             double pivot = calculate_pivot(arr, low, high);
             int q = PARTITION(arr, low, high, pivot);
+            //System.out.println("pivot is " + pivot);
             //System.out.println("low: " + low);
             //System.out.println("high: " + high);
             QUICK_SORT(arr, low, q);
@@ -167,23 +182,27 @@ public class Main {
                 int j = arr[low];
                 arr[low] = arr[high];
                 arr[high] = j;
+                noOfSwaps++;
             }
         } else if (N == 3) {
             if (arr[low] > arr[high - 1]) {
                 int j = arr[low];
                 arr[low] = arr[high - 1];
                 arr[high - 1] = j;
+                noOfSwaps++;
             }
         }
         if (arr[low] > arr[high]) {
             int j = arr[low];
             arr[low] = arr[high];
             arr[high] = j;
+            noOfSwaps++;
         }
         if (arr[high - 1] > arr[high]) {
             int j = arr[high - 1];
             arr[high - 1] = arr[high];
             arr[high] = j;
+            noOfSwaps++;
         }
         return arr;
     }
@@ -198,9 +217,11 @@ public class Main {
             z++;
             do {
                 j--;
+                noOfChecks++;
             } while (arr[j] > pivot);
             do {
                 i++;
+                noOfChecks++;
             } while (arr[i] < pivot);
 
            /* System.out.println("i: " + arr[i] + "\nj: " + arr[j]);
@@ -208,10 +229,12 @@ public class Main {
             System.out.println("iteration number " + z);*/
             //printArray(arr);
 
+            noOfChecks++;
             if (i < j) {
                 int temp = arr[i];
                 arr[i] = arr[j];
                 arr[j] = temp;
+                noOfSwaps++;
             } else {
                //System.out.println("returning " + j);
                 return j;
@@ -251,6 +274,7 @@ public class Main {
         int min = arr[low];
         //System.out.println("min is " + min);
         for (int i = low; i <= high; i++) {
+            noOfChecks++;
             if (arr[i] < min) {
                 min = arr[i];
             }
@@ -263,6 +287,7 @@ public class Main {
         int max = arr[low];
         //System.out.println("max is " + max);
         for (int i = low; i <= high; i++) {
+            noOfChecks++;
             if (arr[i] > max) {
                 max = arr[i];
             }
@@ -272,6 +297,7 @@ public class Main {
     }
 
     private static int[] classicalQuickSort(int[] arr, int low, int high) {
+        noOfChecks1++;
         if (low < high) {
             int qt = classicalPartition(arr, low, high);
             classicalQuickSort(arr, low, qt - 1);
@@ -286,6 +312,7 @@ public class Main {
 
         for (int j = low; j < high; j++) {
             // If current element is smaller than or equal to the pivot
+            noOfChecks1++;
             if (arr[j] <= pivot) {
                 // Increment index of smaller element
                 i++;
@@ -293,14 +320,28 @@ public class Main {
                 int temp = arr[i];
                 arr[i] = arr[j];
                 arr[j] = temp;
+                noOfSwaps1++;
             }
         }
 
         // Swap arr[i+1] and arr[high] (place pivot element at its correct position)
+        noOfSwaps1++;
         int temp = arr[i + 1];
         arr[i + 1] = arr[high];
         arr[high] = temp;
         return i + 1;
+    }
+
+    public static void shuffleArray(int[] array) {
+        int n = array.length;
+        Random random = new Random();
+        for (int i = n - 1; i > 0; i--) {
+            int j = random.nextInt(i + 1);
+            // Swap array[i] and array[j]
+            int temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
     }
 
 }
