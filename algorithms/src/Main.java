@@ -1,3 +1,4 @@
+import java.sql.SQLOutput;
 import java.util.Random;
 
 public class Main {
@@ -7,9 +8,9 @@ public class Main {
         QUICK_SORT(arr, 0, arr.length -1);
         printArray(arr);
 
-        testAlgorithmPerformance(10000);
+        testAlgorithmPerformance(1000);
+        testAlgorithmPerformance(5000);
         testAlgorithmPerformance(15000);
-        testAlgorithmPerformance(20000);
     }
 
 
@@ -55,13 +56,15 @@ public class Main {
         long averageCaseRuntimeSumProposed = 0;
         long averageCaseRuntimeSumClassical = 0;
 
+
         for (int j = 0; j < 5; j++) {
             int[] averageCaseArray = new int[(int) size];
             for (int i = 0; i < Math.ceil(size / 2); i++) {
                 averageCaseArray[i] = 2 * i + 1;
-                averageCaseArray[i + (int) Math.ceil(size / 2)] = 2 * i + 2;
+                averageCaseArray[i + (int) size / 2] = 2 * i + 2;
             }
             int[] averageCaseArrayCopy = averageCaseArray.clone();
+            //printArray(averageCaseArrayCopy);
 
             // Measure runtime for the proposed algorithm
             long startTime3 = System.nanoTime();
@@ -130,15 +133,24 @@ public class Main {
         System.out.println();
     }
 
+    public static void printArray(int[] arr, int low, int high) {
+        for (int i = low; i <= high; i++) {
+            System.out.print(arr[i] + " ");
+        }
+        System.out.println();
+    }
+
     //Algorithm 1: Quick Sort
     public static void QUICK_SORT(int[] arr, int low, int high) {
         int N = high - low + 1;
+        //System.out.println("size:" + N);
         if (N <= 3) {
             MANUAL_SORT(arr, low, high);
         } else {
             double pivot = calculate_pivot(arr, low, high);
-            System.out.println("pivot is " + pivot);
             int q = PARTITION(arr, low, high, pivot);
+            //System.out.println("low: " + low);
+            //System.out.println("high: " + high);
             QUICK_SORT(arr, low, q);
             QUICK_SORT(arr, q + 1, high);
         }
@@ -177,46 +189,59 @@ public class Main {
     }
 
     //TO DO
-    private static int PARTITION(int[] arr, int low, int high, double pivot) {
-        int i = low;
-        int j = high;
-
+    public static int PARTITION(int[] arr, int low, int high, double pivot) {
+        int i = low - 1;
+        int j = high + 1;
+        int z = 0;
+        //printArray(arr, low, high);
         while (true) {
-            while (arr[i] < pivot)
-                i++;
-            while (arr[j] > pivot)
+            z++;
+            do {
                 j--;
+            } while (arr[j] > pivot);
+            do {
+                i++;
+            } while (arr[i] < pivot);
 
-            if (i >= j)
+           /* System.out.println("i: " + arr[i] + "\nj: " + arr[j]);
+            System.out.println("pivot: " + pivot);
+            System.out.println("iteration number " + z);*/
+            //printArray(arr);
+
+            if (i < j) {
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            } else {
+               //System.out.println("returning " + j);
                 return j;
-
-            int temp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = temp;
-            i++;
-            j--;
-
-            // Check if i and j cross each other
-            if (i > j)
-                return j;
+            }
         }
     }
 
-
     private static double calculate_pivot(int[] arr, int low, int high) {
         // Find the minimum and maximum values in the first half of the array
-        double min1 = min(arr, low, high);
-        double max1 = max(arr, low, high);
-        double mean1 = (min1 + max1) / ((high / 2) - low + 1);
+       // System.out.println("pivot calc");
+        //System.out.println("low is " );
+        //printArray(arr, low, high);
+        int high1 = high - (high - low)/2;
+        double min1 = min(arr, low, high1);
+        //System.out.println(min1);
+        double max1 = max(arr, low, high1);
+        //System.out.println(max1);
+        double mean1 = (min1 + max1) / 2;
+        //System.out.println("mean1: " + mean1 +"min is " + min1 + " max is " + max1 + " low is " + low + " high is  " + high1);
 
-        /*// Find the minimum and maximum values in the second half of the array
-        double min2 = min(arr, high / 2 + 1, high);
-        double max2 = max(arr, high / 2 + 1, high);
-        double mean2 = (min2 + max2) / (high - (high / 2 + 1) + 1);
-        System.out.println(mean2 + " min is " + min2 + " max is " + max2 + " low is " + (high / 2 + 1) + " high is  " + high);*/
+        //Find the minimum and maximum values in the second half of the array
+        double min2 = min(arr, high1 + 1, high);
+        //System.out.println(min2);
+        double max2 = max(arr, high1 + 1, high);
+        //System.out.println(max2);
+        double mean2 = (min2 + max2) / 2;
+        //System.out.println("mean2: " + mean2 + " min is " + min2 + " max is " + max2 + " low is " + (high1 + 1) + " high is  " + high);
 
         // Calculate the pivot as the average of the maximum and minimum values from each half
-        return mean1;
+        return (mean1 + mean2)/ 2;
     }
 
 
@@ -224,21 +249,25 @@ public class Main {
     //supporting methods
     public static double min(int[] arr, int low, int high) {
         int min = arr[low];
+        //System.out.println("min is " + min);
         for (int i = low; i <= high; i++) {
             if (arr[i] < min) {
                 min = arr[i];
             }
         }
+        //System.out.println("min is " + min);
         return min;
     }
 
     public static double max(int[] arr, int low, int high) {
         int max = arr[low];
+        //System.out.println("max is " + max);
         for (int i = low; i <= high; i++) {
             if (arr[i] > max) {
                 max = arr[i];
             }
         }
+        //System.out.println("max is " + max);
         return max;
     }
 
@@ -275,3 +304,5 @@ public class Main {
     }
 
 }
+
+
